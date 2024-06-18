@@ -94,30 +94,3 @@ export const getAllSalesByEachCustomer = async() => {
     `);
     return result;
 }
-
-// Encontrar el promedio de la cantidad de productos ordenados por cada cliente:
-
-export const getAverageProductsOrderedByEachCustomer = async() => {
-    let [result] = await connection.query(`
-    SELECT c.customerNumber, c.customerName, AVG(od.quantityOrdered) AS average_products_ordered FROM customers AS c 
-    JOIN orders AS o USING (customerNumber)
-    JOIN orderdetails AS od USING (orderNumber)
-    GROUP BY c.customerNumber;
-    `);
-    return result;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

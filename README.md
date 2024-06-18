@@ -258,29 +258,28 @@ SELECT COUNT(employeeNumber) AS number_employees, jobTitle FROM employees GROUP 
 14. **Encontrar la cantidad total de productos vendidos por cada vendedor:**
 
     ```sql
-    SELECT SUM(quantityInStock) AS quantity_sales, productVendor FROM products
-    GROUP BY productVendor;
+    SELECT e.firstName, e.lastName, SUM(od.quantityOrdered) AS total_products_sold FROM employees AS e 
+    JOIN customers AS c USING (salesRepEmployeeNumber)
+    JOIN orders AS o USING (customerNumber)
+    JOIN orderdetails AS od USING (orderNumber)
+    GROUP BY e.employeeNumber;
     ```
 
 15. **Calcular el total de pagos recibidos por cada vendedor:**
 
     ```sql
-    SELECT COUNT(amount) AS total_pay, productVendor FROM payments
-    INNER JOIN customers USING (customerNumber)
-    INNER JOIN orders USING (customerNumber)
-    INNER JOIN orderdetails USING (orderNumber)
-    INNER JOIN products USING (productCode)
-    GROUP BY productVendor;
+    SELECT e.employeeNumber, e.firstName, e.lastName, SUM(pay.amount) AS  total FROM employees AS e 
+    JOIN customers AS c ON c.salesRepEmployeeNumber = e.employeeNumber
+    JOIN payments AS pay ON c.customerNumber = pay.customerNumber
+    GROUP BY e.employeeNumber;
     ```
 
 16. **Obtener el promedio del límite de crédito de los clientes atendidos por cada vendedor:**
 
     ```sql
-    SELECT AVG(creditLimit) AS average_credit_limit, productVendor FROM customers
-    INNER JOIN orders USING (customerNumber)
-    INNER JOIN orderdetails USING (orderNumber)
-    INNER JOIN products USING (productCode)
-    GROUP BY productVendor;
+    SELECT e.firstName, e.lastName, AVG(ctm.creditLimit) AS average_credit FROM employees AS e 
+    JOIN customers AS ctm ON e.employeeNumber = ctm.salesRepEmployeeNumber
+    GROUP BY e.employeeNumber;
     ```
 
 17. **Encontrar el total de ventas realizadas por cada oficina:**
@@ -306,14 +305,14 @@ SELECT COUNT(employeeNumber) AS number_employees, jobTitle FROM employees GROUP 
 19. **Obtener el total de pagos realizados en cada año:**
 
     ```sql
-    SELECT SUM(amount) AS total_payments, COUNT(amount) AS quantity_payments, YEAR(paymentDate) AS year FROM payments
+    SELECT YEAR(paymentDate) AS year, SUM(amount) AS total FROM payments
     GROUP BY year;
     ```
 
 20. **Encontrar el promedio del precio de venta (priceEach) de los productos por línea de productos:**
 
     ```sql
-    SELECT AVG(priceEach) AS average_price_each, productLine FROM orderdetails
+    SELECT productLine, AVG(priceEach) AS average_price_each FROM orderdetails
     INNER JOIN products USING (productCode)
     GROUP BY productLine;
     ```

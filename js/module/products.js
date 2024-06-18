@@ -1,7 +1,7 @@
 import { connection } from "../../db/conection.js";
 
 // Recuperar todas las líneas de productos con sus descripciones:
-export const getAllProductsDescriptions = async() =>{
+export const getAllProductLineDescriptions = async() =>{
     let [result] = await connection.query(`SELECT productLine, productDescription FROM products`);
     return result;
 }
@@ -83,15 +83,14 @@ export const getAverageBuyPriceByProductLine = async() => {
     return result;
 }
 
-// Encontrar la cantidad total de productos vendidos por cada vendedor:
+// Calcular la cantidad media de productos pedidos por cada cliente:
 
-export const getAllProductsSoldBySalesRep = async() => {
+export const getAverageProductsOrderedByEachCustomer = async() => {
     let [result] = await connection.query(`
-    SELECT e.firstName, e.lastName, SUM(od.quantityOrdered) AS total_products_sold FROM employees AS e 
-    JOIN customers AS c USING (salesRepEmployeeNumber)
+    SELECT c.customerNumber, c.customerName, AVG(od.quantityOrdered) AS average_products_ordered FROM customers AS c 
     JOIN orders AS o USING (customerNumber)
     JOIN orderdetails AS od USING (orderNumber)
-    GROUP BY e.employeeNumber;
+    GROUP BY c.customerNumber;
     `);
     return result;
 }

@@ -30,3 +30,13 @@ export const getAllPaymentsReceivedByEachCountry = async() => {
     `);
     return result;
 }
+
+// Obtener el total de pagos realizados en cada año:
+
+export const getAllPaymentsReceivedByEachYear = async() => {
+    let [result] = await connection.query(`
+    SELECT YEAR(paymentDate) AS year, SUM(amount) AS total FROM payments
+    GROUP BY YEAR(paymentDate);
+    `);
+    return result;
+}

@@ -8,7 +8,6 @@
   "description": "1. Recuperar todas las líneas de productos con sus descripciones:",
   "main": "index.js",
   "type": "module",
-  "devDependencies": {},
   "scripts": {
     "dev": "node js/main.js"
   },

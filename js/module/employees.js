@@ -59,12 +59,37 @@ export const getAllSalesByEachEmployee = async() => {
     return result;
 }
 
+// Encontrar la cantidad total de productos vendidos por cada vendedor:
+
+export const getAllProductsSoldBySalesRep = async() => {
+    let [result] = await connection.query(`
+    SELECT e.firstName, e.lastName, SUM(od.quantityOrdered) AS total_products_sold FROM employees AS e 
+    JOIN customers AS c USING (salesRepEmployeeNumber)
+    JOIN orders AS o USING (customerNumber)
+    JOIN orderdetails AS od USING (orderNumber)
+    GROUP BY e.employeeNumber;
+    `);
+    return result;
+}
+
 // Calcular el total de pagos recibidos por cada vendedor:
 
 export const getAllPaymentsReceivedByEachEmployee = async() => {
     let [result] = await connection.query(`
     SELECT e.employeeNumber, e.firstName, e.lastName, SUM(pay.amount) AS  total FROM employees AS e 
-    JOIN payments AS pay ON e.employeeNumber = pay.employeeNumber
+    JOIN customers AS c ON c.salesRepEmployeeNumber = e.employeeNumber
+    JOIN payments AS pay ON c.customerNumber = pay.customerNumber
+    GROUP BY e.employeeNumber;
+    `);
+    return result;
+}
+
+// Obtener el promedio del límite de crédito de los clientes atendidos por cada vendedor:
+
+export const getAverageCreditLimitOfAllCustomersBySalesRep = async() => {
+    let [result] = await connection.query(`
+    SELECT e.firstName, e.lastName, AVG(ctm.creditLimit) AS average_credit FROM employees AS e 
+    JOIN customers AS ctm ON e.employeeNumber = ctm.salesRepEmployeeNumber
     GROUP BY e.employeeNumber;
     `);
     return result;
