@@ -20,3 +20,15 @@ export const getAllProductsOrderedByEachCustomer = async() => {
     `);
     return result;
 }
+
+// Calcular el total de ventas realizadas en cada país:
+
+export const getAllSalesByEachCountry = async() => {
+    let [result] = await connection.query(`
+    SELECT c.country, SUM(od.quantityOrdered * od.priceEach) AS total_sales FROM customers AS c 
+    JOIN orders AS o USING (customerNumber)
+    JOIN orderdetails AS od USING (orderNumber)
+    GROUP BY c.country;
+    `);
+    return result;
+}

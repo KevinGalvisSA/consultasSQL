@@ -61,3 +61,37 @@ export const getAverageProductsInStockByProductLine = async() => {
     `);
     return result;
 }
+
+// Obtener la cantidad total de productos vendidos por cada línea de productos:
+
+export const getAllProductsSoldByProductLine = async() => {
+    let [result] = await connection.query(`
+    SELECT p.productLine, SUM(od.quantityOrdered) AS total_products_sold FROM products AS p 
+    JOIN orderdetails AS od USING (productCode)
+    GROUP BY p.productLine;
+    `);
+    return result;
+}
+
+// Obtener el promedio del precio de compra de los productos por línea de productos:
+
+export const getAverageBuyPriceByProductLine = async() => {
+    let [result] = await connection.query(`
+    SELECT p.productLine, AVG(p.buyPrice) AS average_buy_price FROM products AS p 
+    GROUP BY p.productLine;
+    `);
+    return result;
+}
+
+// Encontrar la cantidad total de productos vendidos por cada vendedor:
+
+export const getAllProductsSoldBySalesRep = async() => {
+    let [result] = await connection.query(`
+    SELECT e.firstName, e.lastName, SUM(od.quantityOrdered) AS total_products_sold FROM employees AS e 
+    JOIN customers AS c USING (salesRepEmployeeNumber)
+    JOIN orders AS o USING (customerNumber)
+    JOIN orderdetails AS od USING (orderNumber)
+    GROUP BY e.employeeNumber;
+    `);
+    return result;
+}

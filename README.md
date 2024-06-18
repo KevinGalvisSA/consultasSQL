@@ -216,43 +216,43 @@ SELECT COUNT(employeeNumber) AS number_employees, jobTitle FROM employees GROUP 
 9. **Calcular el total de órdenes gestionadas por cada empleado:**
 
    ```sql
-   SELECT COUNT(orderNumber) AS managed_orders, employeeNumber FROM orders AS o
-   JOIN customers AS c ON c.customerNumber = o.customerNumber
-   JOIN employees AS e ON e.employeeNumber = c.salesRepEmployeeNumber
-   GROUP BY employeeNumber;
+   SELECT e.employeeNumber, e.firstName, e.lastName, SUM(od.quantityOrdered * od.priceEach) AS total_sales FROM employees AS e 
+    JOIN orders AS o USING (employeeNumber)
+    JOIN orderdetails AS od USING (orderNumber)
+    GROUP BY e.employeeNumber;
    ```
 
 10. **Obtener la cantidad total de productos vendidos por cada línea de productos:**
 
     ```sql
-    SELECT COUNT(quantityOrdered) AS count_products, productLine FROM products
-    INNER JOIN orderdetails USING (productCode)
-    GROUP BY productLine;
+    SELECT p.productLine, SUM(od.quantityOrdered) AS total_products_sold FROM products AS p 
+    JOIN orderdetails AS od USING (productCode)
+    GROUP BY p.productLine;
     ```
 
 11. **Encontrar el promedio de la cantidad de productos ordenados por cada cliente:**
 
     ```sql
-    SELECT AVG(quantityOrdered) AS average_quantity_ordered, customerNumber FROM orderdetails
-    INNER JOIN orders USING (orderNumber)
-    INNER JOIN customers USING (customerNumber)
-    GROUP BY customerNumber;
+    SELECT c.customerNumber, c.customerName, AVG(od.quantityOrdered) AS average_products_ordered FROM customers AS c 
+    JOIN orders AS o USING (customerNumber)
+    JOIN orderdetails AS od USING (orderNumber)
+    GROUP BY c.customerNumber;
     ```
 
 12. **Calcular el total de ventas realizadas en cada país:**
 
     ```sql
-    SELECT SUM(quantityOrdered * priceEach) AS total_sales, country FROM orderdetails
-    INNER JOIN orders USING (orderNumber)
-    INNER JOIN customers USING (customerNumber)
-    GROUP BY country;
+    SELECT c.country, SUM(od.quantityOrdered * od.priceEach) AS total_sales FROM customers AS c 
+    JOIN orders AS o USING (customerNumber)
+    JOIN orderdetails AS od USING (orderNumber)
+    GROUP BY c.country;
     ```
 
 13. **Obtener el promedio del precio de compra de los productos por línea de productos:**
 
     ```sql
-    SELECT AVG(buyPrice) AS average_buyPrice, productLine FROM products
-    GROUP BY productLine;
+    SELECT p.productLine, AVG(p.buyPrice) AS average_buy_price FROM products AS p 
+    GROUP BY p.productLine;
     ```
 
 14. **Encontrar la cantidad total de productos vendidos por cada vendedor:**

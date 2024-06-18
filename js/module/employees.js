@@ -46,3 +46,26 @@ export const getAllEmployeesCountByJobtitle = async() => {
     `);
     return result;
 }
+
+// Encontrar el promedio de ventas (cantidad ordenada por precio cada uno) por cada empleado
+
+export const getAllSalesByEachEmployee = async() => {
+    let [result] = await connection.query(`
+    SELECT e.employeeNumber, e.firstName, e.lastName, SUM(od.quantityOrdered * od.priceEach) AS total_sales FROM employees AS e 
+    JOIN orders AS o USING (employeeNumber)
+    JOIN orderdetails AS od USING (orderNumber)
+    GROUP BY e.employeeNumber;
+    `);
+    return result;
+}
+
+// Calcular el total de pagos recibidos por cada vendedor:
+
+export const getAllPaymentsReceivedByEachEmployee = async() => {
+    let [result] = await connection.query(`
+    SELECT e.employeeNumber, e.firstName, e.lastName, SUM(pay.amount) AS  total FROM employees AS e 
+    JOIN payments AS pay ON e.employeeNumber = pay.employeeNumber
+    GROUP BY e.employeeNumber;
+    `);
+    return result;
+}
