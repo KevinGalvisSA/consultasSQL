@@ -165,9 +165,9 @@ SELECT COUNT(employeeNumber) AS number_employees, jobTitle FROM employees GROUP 
 3. **Calcular el total de órdenes realizadas por cada cliente:**
 
    ```sql
-  SELECT c.customerNumber, c.customerName, COUNT(o.orderNumber) AS total FROM customers AS c 
-  JOIN orders AS o ON c.customerNumber = o.customerNumber 
-  GROUP BY c.customerNumber;
+   SELECT c.customerNumber, c.customerName, COUNT(o.orderNumber) AS total FROM customers AS c 
+   JOIN orders AS o ON c.customerNumber = o.customerNumber 
+   GROUP BY c.customerNumber;
    ```
 
 4. **Encontrar la cantidad total de productos pedidos por cada cliente:**
